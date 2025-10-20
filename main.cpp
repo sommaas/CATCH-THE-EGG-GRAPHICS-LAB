@@ -81,3 +81,39 @@ void draw_gradient_bg(float r1, float g1, float b1, float r2, float g2, float b2
     glVertex2f(0, WIN_H);
     glEnd();
 }
+
+
+/* Draw chicken */
+void draw_chicken(float cx, float cy) {
+    /* Body */
+    glColor3f(1.0f, 0.95f, 0.2f);
+    glBegin(GL_POLYGON);
+    for (int i = 0; i < 32; ++i) {
+        float theta = (2.0f * 3.14159f * i) / 32.0f;
+        glVertex2f(cx + cosf(theta) * 24.0f, cy + sinf(theta) * 18.0f);
+    }
+    glEnd();
+   
+    /* Eye */
+    glColor3f(0, 0, 0);
+    glPointSize(5.0f);
+    glBegin(GL_POINTS);
+    glVertex2f(cx + 8, cy + 8);
+    glEnd();
+   
+    /* Beak */
+    glColor3f(1.0f, 0.5f, 0.0f);
+    glBegin(GL_TRIANGLES);
+    glVertex2f(cx + 24, cy);
+    glVertex2f(cx + 36, cy + 6);
+    glVertex2f(cx + 36, cy - 6);
+    glEnd();
+   
+    /* Comb */
+    glColor3f(1.0f, 0.2f, 0.2f);
+    glBegin(GL_TRIANGLES);
+    glVertex2f(cx - 4, cy + 18);
+    glVertex2f(cx + 4, cy + 28);
+    glVertex2f(cx + 8, cy + 18);
+    glEnd();
+}
