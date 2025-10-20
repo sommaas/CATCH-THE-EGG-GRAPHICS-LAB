@@ -493,3 +493,24 @@ void keyboard(unsigned char key, int x, int y) {
         else if (key == 'q' || key == 'Q' || key == 27) exit(0);
     }
 }
+
+
+
+void special_keys(int key, int x, int y) {
+    if (state == STATE_PLAYING) {
+        if (key == GLUT_KEY_LEFT) {
+            basket_x -= 25;
+            if (basket_x < 50) basket_x = 50;
+        }
+        if (key == GLUT_KEY_RIGHT) {
+            basket_x += 25;
+            if (basket_x > WIN_W - 50) basket_x = WIN_W - 50;
+        }
+    }
+}
+
+void passive_mouse(int x, int y) {
+    basket_x = (float)x;
+    if (basket_x < 50) basket_x = 50;
+    if (basket_x > WIN_W - 50) basket_x = WIN_W - 50;
+}
