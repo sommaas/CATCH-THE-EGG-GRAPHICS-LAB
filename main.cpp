@@ -536,3 +536,21 @@ void init_gl() {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 }
+
+int main(int argc, char **argv) {
+    srand((unsigned int)time(NULL));
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(WIN_W, WIN_H);
+    glutCreateWindow("Egg Catcher - Improved");
+    init_gl();
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(special_keys);
+    glutPassiveMotionFunc(passive_mouse);
+    glutTimerFunc(TIMER_MS, update_game, 0);
+    reset_game();
+    glutMainLoop();
+    return 0;
+}
