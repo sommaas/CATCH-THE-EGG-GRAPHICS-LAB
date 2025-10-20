@@ -273,3 +273,30 @@ void reset_game() {
     spawn_timer = 0;
     for (int i = 0; i < MAX_OBJS; ++i) objs[i].active = 0;
 }
+
+
+void spawn_object() {
+    for (int i = 0; i < MAX_OBJS; ++i) {
+        if (!objs[i].active) {
+            objs[i].active = 1;
+            objs[i].x = chicken_x + rnd(-20, 20);
+            objs[i].y = chicken_y - 20;
+           
+            int r = rnd(1, 100);
+            if (r <= 5) {
+                objs[i].type = EGG_GOLD;
+                objs[i].vy = 110.0f;
+            } else if (r <= 18) {
+                objs[i].type = EGG_BLUE;
+                objs[i].vy = 100.0f;
+            } else if (r <= 28) {
+                objs[i].type = POOP;
+                objs[i].vy = 130.0f;
+            } else {
+                objs[i].type = EGG_NORMAL;
+                objs[i].vy = 90.0f;
+            }
+            break;
+        }
+    }
+}
