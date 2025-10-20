@@ -514,3 +514,25 @@ void passive_mouse(int x, int y) {
     if (basket_x < 50) basket_x = 50;
     if (basket_x > WIN_W - 50) basket_x = WIN_W - 50;
 }
+
+
+void reshape(int w, int h) {
+    WIN_W = w;
+    WIN_H = h;
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, WIN_W, 0, WIN_H);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+void init_gl() {
+    glClearColor(0.5f, 0.85f, 1.0f, 1.0f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+}
