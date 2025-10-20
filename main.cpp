@@ -464,3 +464,32 @@ void update_game(int value) {
     glutPostRedisplay();
     glutTimerFunc(TIMER_MS, update_game, 0);
 }
+
+void keyboard(unsigned char key, int x, int y) {
+    if (state == STATE_MENU) {
+        if (key == 's' || key == 'S') {
+            reset_game();
+            state = STATE_PLAYING;
+        } else if (key == 'q' || key == 'Q' || key == 27) exit(0);
+    } else if (state == STATE_PLAYING) {
+        if (key == 'p' || key == 'P') state = STATE_PAUSED;
+        else if (key == 'q' || key == 'Q' || key == 27) exit(0);
+        else if (key == 'a' || key == 'A') {
+            basket_x -= 25;
+            if (basket_x < 50) basket_x = 50;
+        } else if (key == 'd' || key == 'D') {
+            basket_x += 25;
+            if (basket_x > WIN_W - 50) basket_x = WIN_W - 50;
+        }
+    } else if (state == STATE_PAUSED) {
+        if (key == 'p' || key == 'P') state = STATE_PLAYING;
+        else if (key == 'q' || key == 'Q' || key == 27) exit(0);
+        else if (key == 'm' || key == 'M') state = STATE_MENU;
+    } else if (state == STATE_GAMEOVER) {
+        if (key == 's' || key == 'S') {
+            reset_game();
+            state = STATE_PLAYING;
+        } else if (key == 'm' || key == 'M') state = STATE_MENU;
+        else if (key == 'q' || key == 'Q' || key == 27) exit(0);
+    }
+}
