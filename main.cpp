@@ -82,7 +82,6 @@ void draw_gradient_bg(float r1, float g1, float b1, float r2, float g2, float b2
     glEnd();
 }
 
-
 /* Draw chicken */
 void draw_chicken(float cx, float cy) {
     /* Body */
@@ -93,14 +92,14 @@ void draw_chicken(float cx, float cy) {
         glVertex2f(cx + cosf(theta) * 24.0f, cy + sinf(theta) * 18.0f);
     }
     glEnd();
-   
+    
     /* Eye */
     glColor3f(0, 0, 0);
     glPointSize(5.0f);
     glBegin(GL_POINTS);
     glVertex2f(cx + 8, cy + 8);
     glEnd();
-   
+    
     /* Beak */
     glColor3f(1.0f, 0.5f, 0.0f);
     glBegin(GL_TRIANGLES);
@@ -108,7 +107,7 @@ void draw_chicken(float cx, float cy) {
     glVertex2f(cx + 36, cy + 6);
     glVertex2f(cx + 36, cy - 6);
     glEnd();
-   
+    
     /* Comb */
     glColor3f(1.0f, 0.2f, 0.2f);
     glBegin(GL_TRIANGLES);
@@ -126,7 +125,7 @@ void draw_bamboo() {
     glVertex2f(30, chicken_y - 15);
     glVertex2f(WIN_W - 30, chicken_y - 15);
     glEnd();
-   
+    
     /* Bamboo segments */
     glColor3f(0.4f, 0.3f, 0.1f);
     glLineWidth(2.0f);
@@ -259,7 +258,6 @@ void draw_hud() {
     drawText(WIN_W - 130, WIN_H - 25, buf);
 }
 
-
 void reset_game() {
     score = 0;
     time_remaining = TIME_LIMIT_SECONDS;
@@ -274,14 +272,13 @@ void reset_game() {
     for (int i = 0; i < MAX_OBJS; ++i) objs[i].active = 0;
 }
 
-
 void spawn_object() {
     for (int i = 0; i < MAX_OBJS; ++i) {
         if (!objs[i].active) {
             objs[i].active = 1;
             objs[i].x = chicken_x + rnd(-20, 20);
             objs[i].y = chicken_y - 20;
-           
+            
             int r = rnd(1, 100);
             if (r <= 5) {
                 objs[i].type = EGG_GOLD;
@@ -301,14 +298,13 @@ void spawn_object() {
     }
 }
 
-
 void check_collision(FallingObj *o) {
     if (!o->active) return;
-   
+    
     if (o->y <= BASKET_Y + 6 && o->y >= BASKET_Y - BASKET_HEIGHT) {
         float left = basket_x - BASKET_WIDTH / 2 - 8;
         float right = basket_x + BASKET_WIDTH / 2 + 8;
-       
+        
         if (o->x >= left && o->x <= right) {
             switch (o->type) {
                 case EGG_NORMAL: score += 1; break;
@@ -322,41 +318,39 @@ void check_collision(FallingObj *o) {
     }
 }
 
-
-
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT);
-   
+    
     if (state == STATE_MENU) {
         draw_gradient_bg(0.5f, 0.8f, 1.0f, 0.3f, 0.5f, 0.8f);
-       
+        
         glColor3f(1.0f, 1.0f, 1.0f);
         drawTextCentered(WIN_H - 120, "EGG CATCHER");
-       
+        
         glColor3f(0.2f, 0.2f, 0.3f);
         drawTextCentered(WIN_H / 2 + 60, "Press S to Start");
         drawTextCentered(WIN_H / 2 + 30, "Move: Mouse or Arrow Keys or A/D");
         drawTextCentered(WIN_H / 2, "Pause: P");
         drawTextCentered(WIN_H / 2 - 30, "Quit: Q or ESC");
         drawTextCentered(WIN_H / 2 - 70, "Catch eggs, avoid poop!");
-       
+        
         char buf[64];
         sprintf(buf, "High Score: %d", highscore);
         drawTextCentered(WIN_H / 2 - 110, buf);
-       
+        
     } else if (state == STATE_PLAYING || state == STATE_PAUSED) {
         draw_gradient_bg(0.5f, 0.85f, 1.0f, 0.7f, 0.95f, 1.0f);
-       
+        
         draw_bamboo();
         draw_chicken(chicken_x, chicken_y);
-       
+        
         for (int i = 0; i < MAX_OBJS; ++i) {
             if (objs[i].active) draw_obj(&objs[i]);
         }
-       
+        
         draw_basket();
         draw_hud();
-       
+        
         if (state == STATE_PAUSED) {
             glColor4f(0, 0, 0, 0.6f);
             glBegin(GL_QUADS);
@@ -365,28 +359,28 @@ void display(void) {
             glVertex2f(WIN_W, WIN_H);
             glVertex2f(0, WIN_H);
             glEnd();
-           
+            
             glColor3f(1.0f, 1.0f, 1.0f);
             drawTextCentered(WIN_H / 2 + 20, "PAUSED");
             drawTextCentered(WIN_H / 2 - 20, "Press P to Resume");
         }
-       
+        
     } else if (state == STATE_GAMEOVER) {
         draw_gradient_bg(0.2f, 0.2f, 0.3f, 0.1f, 0.1f, 0.2f);
-       
+        
         glColor3f(1.0f, 1.0f, 1.0f);
         drawTextCentered(WIN_H / 2 + 80, "GAME OVER");
-       
+        
         char buf[64];
         sprintf(buf, "Final Score: %d", score);
         drawTextCentered(WIN_H / 2 + 40, buf);
         sprintf(buf, "High Score: %d", highscore);
         drawTextCentered(WIN_H / 2 + 10, buf);
-       
+        
         glColor3f(0.8f, 0.8f, 0.9f);
         drawTextCentered(WIN_H / 2 - 40, "S: Restart   M: Menu   Q: Quit");
     }
-   
+    
     glutSwapBuffers();
 }
 
@@ -494,8 +488,6 @@ void keyboard(unsigned char key, int x, int y) {
     }
 }
 
-
-
 void special_keys(int key, int x, int y) {
     if (state == STATE_PLAYING) {
         if (key == GLUT_KEY_LEFT) {
@@ -514,7 +506,6 @@ void passive_mouse(int x, int y) {
     if (basket_x < 50) basket_x = 50;
     if (basket_x > WIN_W - 50) basket_x = WIN_W - 50;
 }
-
 
 void reshape(int w, int h) {
     WIN_W = w;
