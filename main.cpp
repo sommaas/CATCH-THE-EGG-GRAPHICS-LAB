@@ -300,3 +300,24 @@ void spawn_object() {
         }
     }
 }
+
+
+void check_collision(FallingObj *o) {
+    if (!o->active) return;
+   
+    if (o->y <= BASKET_Y + 6 && o->y >= BASKET_Y - BASKET_HEIGHT) {
+        float left = basket_x - BASKET_WIDTH / 2 - 8;
+        float right = basket_x + BASKET_WIDTH / 2 + 8;
+       
+        if (o->x >= left && o->x <= right) {
+            switch (o->type) {
+                case EGG_NORMAL: score += 1; break;
+                case EGG_BLUE: score += 5; break;
+                case EGG_GOLD: score += 10; break;
+                case POOP: score -= 10; break;
+            }
+            if (score > highscore) highscore = score;
+            o->active = 0;
+        }
+    }
+}
