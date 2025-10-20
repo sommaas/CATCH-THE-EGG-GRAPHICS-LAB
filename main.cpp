@@ -258,3 +258,18 @@ void draw_hud() {
     sprintf(buf, "TIME: %02d", time_remaining);
     drawText(WIN_W - 130, WIN_H - 25, buf);
 }
+
+
+void reset_game() {
+    score = 0;
+    time_remaining = TIME_LIMIT_SECONDS;
+    speed_multiplier = 1.0f;
+    chicken_x = WIN_W / 2;
+    chicken_y = 620.0f;
+    chicken_speed = 80.0f;
+    basket_x = WIN_W / 2;
+    game_elapsed_ms = 0;
+    speed_stage = 0;
+    spawn_timer = 0;
+    for (int i = 0; i < MAX_OBJS; ++i) objs[i].active = 0;
+}
