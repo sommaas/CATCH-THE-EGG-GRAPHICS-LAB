@@ -118,9 +118,6 @@ void draw_chicken(float cx, float cy) {
     glEnd();
 }
 
-
-
-
 /* Draw bamboo perch */
 void draw_bamboo() {
     glColor3f(0.5f, 0.35f, 0.15f);
@@ -137,6 +134,51 @@ void draw_bamboo() {
         glBegin(GL_LINES);
         glVertex2f(i, chicken_y - 20);
         glVertex2f(i, chicken_y - 10);
+        glEnd();
+    }
+}
+
+/* Draw basket */
+void draw_basket() {
+    float x = basket_x;
+    float y = BASKET_Y;
+    float w = BASKET_WIDTH / 2;
+    
+    /* Shadow */
+    glColor4f(0, 0, 0, 0.2f);
+    glBegin(GL_POLYGON);
+    for (int i = 0; i < 20; ++i) {
+        float angle = 3.14159f * i / 20.0f;
+        glVertex2f(x + cosf(angle) * (w + 10), y - BASKET_HEIGHT - 2);
+    }
+    glEnd();
+    
+    /* Basket body */
+    glColor3f(0.85f, 0.4f, 0.1f);
+    glBegin(GL_QUADS);
+    glVertex2f(x - w - 8, y);
+    glVertex2f(x + w + 8, y);
+    glVertex2f(x + w, y - BASKET_HEIGHT);
+    glVertex2f(x - w, y - BASKET_HEIGHT);
+    glEnd();
+    
+    /* Rim */
+    glColor3f(0.7f, 0.3f, 0.05f);
+    glLineWidth(4.0f);
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(x - w - 8, y);
+    glVertex2f(x - w, y + 6);
+    glVertex2f(x + w, y + 6);
+    glVertex2f(x + w + 8, y);
+    glEnd();
+    
+    /* Weave pattern */
+    glColor3f(0.6f, 0.25f, 0.05f);
+    glLineWidth(1.5f);
+    for (int i = -3; i <= 3; ++i) {
+        glBegin(GL_LINES);
+        glVertex2f(x + i * 12, y - 2);
+        glVertex2f(x + i * 12, y - BASKET_HEIGHT + 2);
         glEnd();
     }
 }
