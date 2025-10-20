@@ -117,3 +117,26 @@ void draw_chicken(float cx, float cy) {
     glVertex2f(cx + 8, cy + 18);
     glEnd();
 }
+
+
+
+
+/* Draw bamboo perch */
+void draw_bamboo() {
+    glColor3f(0.5f, 0.35f, 0.15f);
+    glLineWidth(10.0f);
+    glBegin(GL_LINES);
+    glVertex2f(30, chicken_y - 15);
+    glVertex2f(WIN_W - 30, chicken_y - 15);
+    glEnd();
+   
+    /* Bamboo segments */
+    glColor3f(0.4f, 0.3f, 0.1f);
+    glLineWidth(2.0f);
+    for (int i = 80; i < WIN_W - 80; i += 60) {
+        glBegin(GL_LINES);
+        glVertex2f(i, chicken_y - 20);
+        glVertex2f(i, chicken_y - 10);
+        glEnd();
+    }
+}
