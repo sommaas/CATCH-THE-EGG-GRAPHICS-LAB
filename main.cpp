@@ -321,3 +321,71 @@ void check_collision(FallingObj *o) {
         }
     }
 }
+
+
+
+void display(void) {
+    glClear(GL_COLOR_BUFFER_BIT);
+   
+    if (state == STATE_MENU) {
+        draw_gradient_bg(0.5f, 0.8f, 1.0f, 0.3f, 0.5f, 0.8f);
+       
+        glColor3f(1.0f, 1.0f, 1.0f);
+        drawTextCentered(WIN_H - 120, "EGG CATCHER");
+       
+        glColor3f(0.2f, 0.2f, 0.3f);
+        drawTextCentered(WIN_H / 2 + 60, "Press S to Start");
+        drawTextCentered(WIN_H / 2 + 30, "Move: Mouse or Arrow Keys or A/D");
+        drawTextCentered(WIN_H / 2, "Pause: P");
+        drawTextCentered(WIN_H / 2 - 30, "Quit: Q or ESC");
+        drawTextCentered(WIN_H / 2 - 70, "Catch eggs, avoid poop!");
+       
+        char buf[64];
+        sprintf(buf, "High Score: %d", highscore);
+        drawTextCentered(WIN_H / 2 - 110, buf);
+       
+    } else if (state == STATE_PLAYING || state == STATE_PAUSED) {
+        draw_gradient_bg(0.5f, 0.85f, 1.0f, 0.7f, 0.95f, 1.0f);
+       
+        draw_bamboo();
+        draw_chicken(chicken_x, chicken_y);
+       
+        for (int i = 0; i < MAX_OBJS; ++i) {
+            if (objs[i].active) draw_obj(&objs[i]);
+        }
+       
+        draw_basket();
+        draw_hud();
+       
+        if (state == STATE_PAUSED) {
+            glColor4f(0, 0, 0, 0.6f);
+            glBegin(GL_QUADS);
+            glVertex2f(0, 0);
+            glVertex2f(WIN_W, 0);
+            glVertex2f(WIN_W, WIN_H);
+            glVertex2f(0, WIN_H);
+            glEnd();
+           
+            glColor3f(1.0f, 1.0f, 1.0f);
+            drawTextCentered(WIN_H / 2 + 20, "PAUSED");
+            drawTextCentered(WIN_H / 2 - 20, "Press P to Resume");
+        }
+       
+    } else if (state == STATE_GAMEOVER) {
+        draw_gradient_bg(0.2f, 0.2f, 0.3f, 0.1f, 0.1f, 0.2f);
+       
+        glColor3f(1.0f, 1.0f, 1.0f);
+        drawTextCentered(WIN_H / 2 + 80, "GAME OVER");
+       
+        char buf[64];
+        sprintf(buf, "Final Score: %d", score);
+        drawTextCentered(WIN_H / 2 + 40, buf);
+        sprintf(buf, "High Score: %d", highscore);
+        drawTextCentered(WIN_H / 2 + 10, buf);
+       
+        glColor3f(0.8f, 0.8f, 0.9f);
+        drawTextCentered(WIN_H / 2 - 40, "S: Restart   M: Menu   Q: Quit");
+    }
+   
+    glutSwapBuffers();
+}
