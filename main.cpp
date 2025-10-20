@@ -182,3 +182,79 @@ void draw_basket() {
         glEnd();
     }
 }
+
+/* Draw falling object with glow effect */
+void draw_obj(const FallingObj *o) {
+    if (!o->active) return;
+    
+    /* Glow effect for special eggs */
+    if (o->type == EGG_GOLD || o->type == EGG_BLUE) {
+        glColor4f(1.0f, 1.0f, 0.5f, 0.3f);
+        glBegin(GL_POLYGON);
+        for (int i = 0; i < 24; ++i) {
+            float th = (2.0f * 3.14159f * i) / 24.0f;
+            glVertex2f(o->x + cosf(th) * 14, o->y + sinf(th) * 18);
+        }
+        glEnd();
+    }
+    
+    /* Object color */
+    switch (o->type) {
+        case EGG_NORMAL: glColor3f(1.0f, 1.0f, 0.95f); break;
+        case EGG_BLUE: glColor3f(0.4f, 0.7f, 1.0f); break;
+        case EGG_GOLD: glColor3f(1.0f, 0.85f, 0.2f); break;
+        case POOP: glColor3f(0.3f, 0.2f, 0.1f); break;
+    }
+    
+    /* Draw egg/poop */
+    glBegin(GL_POLYGON);
+    for (int i = 0; i < 24; ++i) {
+        float th = (2.0f * 3.14159f * i) / 24.0f;
+        glVertex2f(o->x + cosf(th) * 9, o->y + sinf(th) * 13);
+    }
+    glEnd();
+    
+    /* Highlight */
+    if (o->type != POOP) {
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glBegin(GL_POLYGON);
+        for (int i = 0; i < 12; ++i) {
+            float th = (2.0f * 3.14159f * i) / 12.0f;
+            glVertex2f(o->x - 3 + cosf(th) * 3, o->y + 4 + sinf(th) * 4);
+        }
+        glEnd();
+    }
+}
+
+/* Draw modern HUD */
+void draw_hud() {
+    char buf[64];
+    
+    /* Score panel */
+    glColor4f(0.1f, 0.1f, 0.2f, 0.7f);
+    glBegin(GL_QUADS);
+    glVertex2f(10, WIN_H - 70);
+    glVertex2f(180, WIN_H - 70);
+    glVertex2f(180, WIN_H - 10);
+    glVertex2f(10, WIN_H - 10);
+    glEnd();
+    
+    glColor3f(1.0f, 1.0f, 1.0f);
+    sprintf(buf, "SCORE: %d", score);
+    drawText(20, WIN_H - 25, buf);
+    sprintf(buf, "HIGH: %d", highscore);
+    drawText(20, WIN_H - 50, buf);
+    
+    /* Time panel */
+    glColor4f(0.1f, 0.1f, 0.2f, 0.7f);
+    glBegin(GL_QUADS);
+    glVertex2f(WIN_W - 150, WIN_H - 50);
+    glVertex2f(WIN_W - 10, WIN_H - 50);
+    glVertex2f(WIN_W - 10, WIN_H - 10);
+    glVertex2f(WIN_W - 150, WIN_H - 10);
+    glEnd();
+    
+    glColor3f(1.0f, 1.0f, 1.0f);
+    sprintf(buf, "TIME: %02d", time_remaining);
+    drawText(WIN_W - 130, WIN_H - 25, buf);
+}
