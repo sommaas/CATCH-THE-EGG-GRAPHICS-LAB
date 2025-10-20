@@ -1,89 +1,83 @@
 #include <GL/glut.h>
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <string>
-#include <algorithm>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
 
-using namespace std;
+/* Screen */
+int WIN_W = 600;
+int WIN_H = 700;
 
-// Window dimensions
-const int WINDOW_WIDTH = 900;
-const int WINDOW_HEIGHT = 700;
+/* Game states */
+typedef enum { STATE_MENU, STATE_PLAYING, STATE_PAUSED, STATE_GAMEOVER } GameState;
+GameState state = STATE_MENU;
 
-// Game states
-enum GameState { MENU, HELP, PLAYING, PAUSED, GAME_OVER };
-GameState currentState = MENU;
+/* Timing */
+const int FPS = 60;
+const int TIMER_MS = 1000 / FPS;
+const int TIME_LIMIT_SECONDS = 60;
+int time_remaining = TIME_LIMIT_SECONDS;
 
-// Game variables
+/* Basket */
+float basket_x = 300.0f;
+const float BASKET_Y = 50.0f;
+const float BASKET_WIDTH = 90.0f;
+const float BASKET_HEIGHT = 25.0f;
+
+/* Score */
 int score = 0;
-int highScore = 0;
-float gameTime = 60.0f;
-float timeRemaining = gameTime;
-float lastTime = 0;
-int comboCount = 0;
-int maxCombo = 0;
+int highscore = 0;
 
-// Basket properties
-float basketX = 450;
-float basketY = 50;
-float basketWidth = 80;
-float basketHeight = 60;
-float basketSpeed = 15.0f;
+/* Chicken */
+float chicken_x = 300.0f;
+float chicken_y = 620.0f;
+float chicken_speed = 80.0f;
 
-// Multiple chicken properties
-struct Chicken {
-    float x, y;
-    float speed;
-    int direction;
-    float stickY;
-    float stickLeft, stickRight;
-    bool active;
-};
+/* Speed progression */
+int game_elapsed_ms = 0;
+int speed_stage = 0;
+const float SPEED_INCREASE = 1.25f;
 
-vector<Chicken> chickens;
+/* Falling objects */
+typedef enum { EGG_NORMAL, EGG_BLUE, EGG_GOLD, POOP } ObjType;
 
-// Egg/Item types
-enum ItemType { 
-    NORMAL_EGG, BLUE_EGG, GOLDEN_EGG, POOP, 
-    PERK_LARGER_BASKET, PERK_SLOW_TIME, PERK_EXTRA_TIME,
-    PERK_SHIELD, PERK_MAGNET, PERK_SPEED_BOOST,
-    BOMB // New damage item
-};
+typedef struct {
+    int active;
+    float x, y, vy;
+    ObjType type;
+} FallingObj;
 
-struct FallingItem {
-    float x, y;
-    float vx, vy; // Velocity for airflow
-    ItemType type;
-    float speed;
-    bool active;
-    float rotation;
-    int sourceChicken; // Which chicken dropped it
-};
+#define MAX_OBJS 30
+FallingObj objs[MAX_OBJS];
 
-vector<FallingItem> items;
-float spawnTimer = 0;
-float spawnInterval = 1.2f;
+int spawn_timer = 0;
+int spawn_interval = 900;
+float speed_multiplier = 1.0f;
 
-// Airflow system
-struct Airflow {
-    float startTime;
-    float duration;
-    float strength;
-    int direction; // -1 left, 1 right
-    bool active;
-};
+/* Utility functions */
+int rnd(int a, int b) { return a + rand() % (b - a + 1); }
 
-Airflow currentAirflow;
-float airflowTimer = 0;
-float airflowInterval = 8.0f;
+void drawText(float x, float y, const char *s) {
+    glRasterPos2f(x, y);
+    while (*s) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *s++);
+}
 
-// Particle system for effects
-struct Particle {
-    float x, y;
-    float vx, vy;
-    float life;
-    float r, g, b;
-};
+void drawTextCentered(float y, const char *s) {
+    int len = 0;
+    const char *p = s;
+    while (*p++) len++;
+    float x = (WIN_W - len * 10) / 2.0f;
+    drawText(x, y, s);
+}
+
+/* Draw gradient background */
+void draw_gradient_bg(float r1, float g1, float b1, float r2, float g2, float b2) {
+    glBegin(GL_QUADS);
+    glColor3f(r1, g1, b1);
+    glVertex2f(0, 0);
+    glVertex2f(WIN_W, 0);
+    glColor3f(r2, g2, b2);
+    glVertex2f(WIN_W, WIN_H);
+    glVertex2f(0, WIN_H);
+    glEnd();
+}
