@@ -389,3 +389,78 @@ void display(void) {
    
     glutSwapBuffers();
 }
+
+void update_game(int value) {
+    static int last_time = 0;
+    static int init = 0;
+    int now = glutGet(GLUT_ELAPSED_TIME);
+    if (!init) { last_time = now; init = 1; }
+    int dt = now - last_time;
+    if (dt > 1000) dt = TIMER_MS;
+    last_time = now;
+    
+    if (state == STATE_PLAYING) {
+        game_elapsed_ms += dt;
+        
+        /* Speed increases at 15s, 30s, 45s */
+        if (speed_stage == 0 && game_elapsed_ms >= 15000) {
+            chicken_speed *= SPEED_INCREASE;
+            speed_multiplier *= SPEED_INCREASE;
+            speed_stage = 1;
+        } else if (speed_stage == 1 && game_elapsed_ms >= 30000) {
+            chicken_speed *= SPEED_INCREASE;
+            speed_multiplier *= SPEED_INCREASE;
+            speed_stage = 2;
+        } else if (speed_stage == 2 && game_elapsed_ms >= 45000) {
+            chicken_speed *= SPEED_INCREASE;
+            speed_multiplier *= SPEED_INCREASE;
+            speed_stage = 3;
+        }
+        
+        /* Move chicken */
+        float dt_sec = dt / 1000.0f;
+        chicken_x += chicken_speed * dt_sec;
+        if (chicken_x < 50) {
+            chicken_x = 50;
+            chicken_speed = fabs(chicken_speed);
+        }
+        if (chicken_x > WIN_W - 50) {
+            chicken_x = WIN_W - 50;
+            chicken_speed = -fabs(chicken_speed);
+        }
+        
+        /* Spawn objects */
+        spawn_timer += dt;
+        int interval = spawn_interval;
+        if (score >= 30) interval = 550;
+        else if (score >= 15) interval = 730;
+        
+        if (spawn_timer >= interval) {
+            spawn_timer = 0;
+            spawn_object();
+        }
+        
+        /* Update falling objects */
+        for (int i = 0; i < MAX_OBJS; ++i) {
+            if (!objs[i].active) continue;
+            objs[i].y -= objs[i].vy * dt_sec * speed_multiplier;
+            check_collision(&objs[i]);
+            if (objs[i].y < -20) objs[i].active = 0;
+        }
+        
+        /* Timer countdown */
+        static int time_acc = 0;
+        time_acc += dt;
+        if (time_acc >= 1000) {
+            time_acc -= 1000;
+            time_remaining--;
+            if (time_remaining <= 0) {
+                time_remaining = 0;
+                state = STATE_GAMEOVER;
+            }
+        }
+    }
+    
+    glutPostRedisplay();
+    glutTimerFunc(TIMER_MS, update_game, 0);
+}
