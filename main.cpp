@@ -312,6 +312,7 @@ void check_collision(FallingObj *o) {
                 case EGG_GOLD: score += 10; break;
                 case POOP: score -= 10; break;
             }
+            if (score < 0) score = 0;
             if (score > highscore) highscore = score;
             o->active = 0;
         }
